@@ -91,7 +91,7 @@ document.getElementById('processBtn').addEventListener('click', function () {
                     // Show download link
                     const downloadLink = document.getElementById('downloadLink');
                     downloadLink.href = canvas.toDataURL('image/png');
-                    downloadLink.download = 'modified-image.png';
+                    downloadLink.download = 'yuva-shakti.png';
                     downloadLink.classList.remove('hidden');
 
                     // Show success notification
