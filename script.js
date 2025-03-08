@@ -57,7 +57,7 @@ document.getElementById('processBtn').addEventListener('click', function () {
                     ctx.drawImage(backgroundImg, 0, 0);
 
                     // Crop the user's image into a circle
-                    const circleSize = 150; // Diameter of the circle
+                    const circleSize = 275; // Diameter of the circle
                     const x = canvas.width - circleSize - 50; // Position from the right
                     const y = 50; // Position from the top
 
