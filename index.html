@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>युवा शक्ति</title>
+    <link rel="icon" type="image/x-icon" href="https://ik.imagekit.io/ohiabhist/yuva.png?updatedAt=1741420104589">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin-bottom: 100px; /* Space for fixed footer */
+        }
+        #preview, #output, #finalOutput {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        #loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+        .loader-spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .user-name {
+            font-size: 24px; /* Increased font size */
+            font-weight: bold;
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
+        #scrollToTop {
+            display: none;
+            position: fixed;
+            bottom: 80px; /* Adjusted for fixed footer */
+            right: 20px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+        }
+        #scrollToTop:hover {
+            background-color: #2980b9;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        footer a {
+            color: white;
+            margin: 0 10px;
+            font-size: 24px;
+        }
+        footer a:hover {
+            color: #3498db;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            display: none;
+        }
+        .notification.success {
+            background-color: #28a745;
+        }
+        .notification.error {
+            background-color: #dc3545;
+        }
+        @media (max-width: 768px) {
+            .user-name {
+                font-size: 20px;
+            }
+            footer a {
+                font-size: 20px;
+            }
+        }
+        .boxxxx{
+            margin-top: 3rem;
+        }
+        .yuva{            
+            margin-top: 3rem;
+        }
+        marquee{
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            color: red;
+            font-size: x-large;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Image Editor</a>
+            <a href="https://www.instagram.com/ohi_abhist/" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <marquee behavior="scroll" direction="right" scrollamount="12">युवा शक्ति ज़िंदाबाद ✊🙌🏻</marquee>
+        <h1 class="text-center mb-10 text-success">अपनी फोटो लगवाओ युवा शक्ति के पोस्टर पर और जुड़ो युवा शक्ति के साथ।</h1>
+        <h3 class="text-center text-warning yuva">संघर्ष युवाओं का सम्मान बुजुर्गों का।</h3>
+        <div class="row justify-content-center">
+            <div class="col-md-6 boxxxx">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-image"></i></span>
+                    <input type="file" id="imageUpload" class="form-control" accept="image/*">
+                </div>
+                <div class="input-group mt-3">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" id="userName" class="form-control" placeholder="Enter your name">
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <button id="processBtn" class="btn btn-primary w-100">
+                            <i class="fas fa-magic"></i> शुरू करो
+                        </button>
+                    </div>
+                    <div class="col">
+                        <a id="downloadLink" class="btn btn-success w-100 hidden">
+                            <i class="fas fa-download"></i> Download Image
+                        </a>
+                    </div>
+                </div>
+                <div class="mt-3 text-center">
+                    <img id="preview" src="#" alt="Preview" class="hidden">
+                    <canvas id="output" class="hidden"></canvas>
+                    <img id="finalOutput" src="#" alt="Final Output" class="hidden">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" title="Go to top"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Made by <span class="text-danger">Rajkuamr</span>❤️.</p>
+            <p>Follow us on:</p>
+            <a href="https://www.facebook.com/ohiabhist" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/ohi_abhist/" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+    </footer>
+
+    <!-- Loader -->
+    <div id="loader" class="hidden">
+        <div class="loader-spinner"></div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notification" class="notification"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
