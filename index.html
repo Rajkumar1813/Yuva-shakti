@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,183 +7,453 @@
     <link rel="icon" type="image/x-icon" href="https://ik.imagekit.io/ohiabhist/yuva.png?updatedAt=1741420104589">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Cropper.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+
     <style>
+        :root {
+            --saffron: #FF6B00;
+            --green: #138808;
+            --navy: #000080;
+            --red: #e00000;
+            --light-bg: #fffdf7;
+            --card-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: Arial, sans-serif;
-            margin-bottom: 100px; /* Space for fixed footer */
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: var(--light-bg);
+            margin: 0;
+            padding-bottom: 90px;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        #preview, #output, #finalOutput {
-            max-width: 100%;
-            height: auto;
-            margin-top: 20px;
+
+        /* ─── NAVBAR ─── */
+        .navbar {
+            background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 100%) !important;
+            padding: 12px 20px;
+            border-bottom: 3px solid var(--saffron);
         }
-        .hidden {
-            display: none;
+        .navbar-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff !important;
+            letter-spacing: 1px;
         }
-        #loader {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
+        .navbar-brand span { color: var(--saffron); }
+        .nav-insta { color: #e1306c; font-size: 1.4rem; transition: transform 0.2s; }
+        .nav-insta:hover { transform: scale(1.2); }
+
+        /* ─── MARQUEE ─── */
+        .marquee-wrap {
+            background: linear-gradient(90deg, var(--saffron), var(--red), var(--saffron));
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 8px 0;
+            letter-spacing: 1px;
         }
-        .loader-spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .user-name {
-            font-size: 24px; /* Increased font size */
-            font-weight: bold;
-            color: red;
+
+        /* ─── HERO ─── */
+        .hero {
+            background: linear-gradient(160deg, #fff8f0 0%, #fff 60%, #f0fff4 100%);
+            padding: 40px 20px 20px;
             text-align: center;
+        }
+        .hero h1 {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: var(--green);
+            font-weight: 800;
+            line-height: 1.4;
+        }
+        .hero h3 {
+            color: var(--saffron);
+            font-size: clamp(1rem, 3vw, 1.3rem);
             margin-top: 10px;
+            font-style: italic;
         }
-        #scrollToTop {
+
+        /* ─── CARD ─── */
+        .main-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 560px;
+            border-top: 4px solid var(--saffron);
+        }
+
+        .step-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        /* ─── INPUTS ─── */
+        .input-group-text { background: #f8f8f8; border-right: none; }
+        .form-control { border-left: none; }
+        .form-control:focus { box-shadow: 0 0 0 3px rgba(255,107,0,0.18); border-color: var(--saffron); }
+
+        /* ─── UPLOAD ZONE ─── */
+        .upload-zone {
+            border: 2.5px dashed #ccc;
+            border-radius: 14px;
+            padding: 28px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            background: #fafafa;
+            position: relative;
+        }
+        .upload-zone:hover { border-color: var(--saffron); background: #fff8f0; }
+        .upload-zone.has-file { border-color: var(--green); background: #f0fff4; }
+        .upload-zone i { font-size: 2rem; color: #bbb; margin-bottom: 8px; display: block; }
+        .upload-zone.has-file i { color: var(--green); }
+        .upload-zone p { margin: 0; color: #777; font-size: 0.9rem; }
+        .upload-zone.has-file p { color: var(--green); font-weight: 600; }
+        #imageUpload { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+
+        /* ─── CROPPER MODAL ─── */
+        .crop-modal-overlay {
             display: none;
             position: fixed;
-            bottom: 80px; /* Adjusted for fixed footer */
-            right: 20px;
-            z-index: 99;
-            font-size: 18px;
-            border: none;
-            outline: none;
-            background-color: #3498db;
-            color: white;
-            cursor: pointer;
-            padding: 15px;
-            border-radius: 50%;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
         }
-        #scrollToTop:hover {
-            background-color: #2980b9;
-        }
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
+        .crop-modal-overlay.active { display: flex; }
+        .crop-box {
+            background: #111;
+            border-radius: 16px;
+            padding: 16px;
+            max-width: 500px;
             width: 100%;
         }
-        footer a {
-            color: white;
-            margin: 0 10px;
-            font-size: 24px;
+        .crop-box h5 { color: #fff; text-align: center; margin-bottom: 14px; font-size: 1rem; }
+        .crop-container { max-height: 60vh; overflow: hidden; border-radius: 10px; }
+        #cropImage { max-width: 100%; display: block; }
+        .crop-actions { display: flex; gap: 10px; margin-top: 14px; }
+        .crop-actions button { flex: 1; padding: 10px; border: none; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
+        .btn-crop-cancel { background: #444; color: #fff; }
+        .btn-crop-done { background: var(--saffron); color: #fff; }
+
+        /* ─── CROPPED THUMB ─── */
+        #croppedThumb {
+            display: none;
+            margin-top: 14px;
+            text-align: center;
         }
-        footer a:hover {
-            color: #3498db;
+        #croppedThumb img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--saffron);
+            object-fit: cover;
         }
+        #croppedThumb p { font-size: 0.8rem; color: var(--green); font-weight: 600; margin-top: 6px; }
+        #recropBtn {
+            font-size: 0.78rem;
+            color: var(--saffron);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: 0;
+        }
+
+        /* ─── BUTTONS ─── */
+        .btn-process {
+            background: linear-gradient(135deg, var(--navy), #0000c0);
+            color: #fff;
+            border: none;
+            padding: 13px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn-process:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,128,0.3); }
+        .btn-process:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-preview-jump {
+            background: linear-gradient(135deg, var(--green), #1db010);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        .btn-preview-jump:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(19,136,8,0.3); }
+
+        .btn-download {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: #fff;
+            border: none;
+            padding: 11px 20px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: none;
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        .btn-download:hover { transform: translateY(-2px); color: #fff; }
+
+        /* ─── OUTPUT IMAGE ─── */
+        #outputSection {
+            max-width: 560px;
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+        #outputSection h4 {
+            color: var(--navy);
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        #finalOutput {
+            max-width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: none;
+        }
+
+        /* ─── LOADER ─── */
+        #loader {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+        #loader.active { display: flex; }
+        .loader-ring {
+            width: 60px; height: 60px;
+            border: 5px solid rgba(255,255,255,0.2);
+            border-top-color: var(--saffron);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+        #loader p { color: #fff; font-weight: 600; font-size: 1rem; margin: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ─── NOTIFICATION ─── */
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 1000;
-            padding: 10px 20px;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
+            z-index: 10000;
+            padding: 12px 22px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 700;
             display: none;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
         }
-        .notification.success {
-            background-color: #28a745;
+        @keyframes slideIn { from { transform: translateX(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .notification.success { background: var(--green); }
+        .notification.error { background: var(--red); }
+
+        /* ─── FOOTER ─── */
+        footer {
+            background: linear-gradient(135deg, #0a0a2e, #1a1a4e);
+            color: #ccc;
+            padding: 16px 20px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 3px solid var(--saffron);
+            z-index: 100;
         }
-        .notification.error {
-            background-color: #dc3545;
+        footer p { margin: 2px 0; font-size: 0.85rem; }
+        footer a { color: #fff; margin: 0 8px; font-size: 1.3rem; transition: color 0.2s; }
+        footer a:hover { color: var(--saffron); }
+        .text-saffron { color: var(--saffron); }
+
+        /* ─── SCROLL TOP ─── */
+        #scrollToTop {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            z-index: 200;
+            background: var(--saffron);
+            color: #fff;
+            border: none;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(255,107,0,0.4);
+            transition: all 0.2s;
         }
-        @media (max-width: 768px) {
-            .user-name {
-                font-size: 20px;
-            }
-            footer a {
-                font-size: 20px;
-            }
+        #scrollToTop:hover { transform: scale(1.1); }
+
+        /* ─── DIVIDER ─── */
+        .tri-divider {
+            display: flex;
+            height: 6px;
+            margin: 0;
         }
-        .boxxxx{
-            margin-top: 3rem;
-        }
-        .yuva{            
-            margin-top: 3rem;
-        }
-        marquee{
-            margin-bottom: 1rem;
-            color: red;
-            font-size: x-large;
+        .tri-divider span { flex: 1; }
+        .tri-divider .s { background: var(--saffron); }
+        .tri-divider .w { background: #fff; }
+        .tri-divider .g { background: var(--green); }
+
+        @media (max-width: 576px) {
+            .main-card { margin: 14px; padding: 20px 16px; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#">Image Editor</a>
-            <a href="https://www.instagram.com/ohi_abhist/" target="_blank"><i class="fab fa-instagram"></i></a>
-        </div>
-    </nav>
 
-    <div class="container mt-5">
-        <marquee behavior="scroll" direction="right" scrollamount="12">युवा शक्ति ज़िंदाबाद ✊🙌🏻</marquee>
-        <h1 class="text-center mb-10 text-success">अपनी फोटो लगाओ युवा शक्ति के पोस्टर पर और जुड़ो युवा शक्ति के साथ।</h1>
-        <h3 class="text-center text-warning yuva">संघर्ष युवाओं का सम्मान बुजुर्गों का।</h3>
-        <div class="row justify-content-center">
-            <div class="col-md-6 boxxxx">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-image"></i></span>
-                    <input type="file" id="imageUpload" class="form-control" accept="image/*">
-                </div>
-                <div class="input-group mt-3">
-                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                    <input type="text" id="userName" class="form-control" placeholder="अपना नाम लिखो">
-                </div>
-                <div class="row mt-3">
-                    <div class="col">
-                        <button id="processBtn" class="btn btn-primary w-100">
-                            <i class="fas fa-magic"></i> शुरू करो
-                        </button>
-                    </div>
-                    <div class="col">
-                        <a id="downloadLink" class="btn btn-success w-100 hidden">
-                            <i class="fas fa-download"></i> Download Image
-                        </a>
-                    </div>
-                </div>
-                <div class="mt-3 text-center">
-                    <img id="preview" src="#" alt="Preview" class="hidden">
-                    <canvas id="output" class="hidden"></canvas>
-                    <img id="finalOutput" src="#" alt="Final Output" class="hidden">
-                </div>
-            </div>
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <span class="navbar-brand">युवा <span>शक्ति</span></span>
+        <a href="https://www.instagram.com/ohi_abhist/" target="_blank" class="nav-insta">
+            <i class="fab fa-instagram"></i>
+        </a>
+    </div>
+</nav>
+
+<!-- TRICOLOR STRIP -->
+<div class="tri-divider">
+    <span class="s"></span><span class="w"></span><span class="g"></span>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+    <marquee behavior="scroll" direction="left" scrollamount="8">✊ युवा शक्ति ज़िंदाबाद 🙌 संघर्ष युवाओं का — सम्मान बुजुर्गों का ✊ युवा शक्ति ज़िंदाबाद 🙌</marquee>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>अपनी फोटो लगाओ युवा शक्ति के पोस्टर पर<br>और जुड़ो युवा शक्ति के साथ।</h1>
+    <h3>संघर्ष युवाओं का — सम्मान बुजुर्गों का।</h3>
+</div>
+
+<div class="container px-3">
+
+    <!-- MAIN CARD -->
+    <div class="main-card">
+
+        <!-- STEP 1: Upload -->
+        <p class="step-label">📷 Step 1 — अपनी फोटो चुनो</p>
+        <div class="upload-zone" id="uploadZone">
+            <input type="file" id="imageUpload" accept="image/*">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p id="uploadText">यहाँ क्लिक करो या फोटो drag करो</p>
         </div>
+
+        <!-- Cropped Thumb Preview -->
+        <div id="croppedThumb">
+            <img id="croppedPreviewImg" src="#" alt="Cropped">
+            <p>✅ फोटो crop हो गई!</p>
+            <button id="recropBtn"><i class="fas fa-crop-alt"></i> दोबारा crop करो</button>
+        </div>
+
+        <!-- STEP 2: Name -->
+        <p class="step-label mt-4">✏️ Step 2 — अपना नाम लिखो</p>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-user"></i></span>
+            <input type="text" id="userName" class="form-control" placeholder="अपना नाम लिखो">
+        </div>
+
+        <!-- STEP 3: Process -->
+        <p class="step-label mt-4">🎨 Step 3 — पोस्टर बनाओ</p>
+        <button id="processBtn" class="btn-process" disabled>
+            <i class="fas fa-magic"></i> &nbsp;पोस्टर बनाओ
+        </button>
+
+        <!-- Preview Jump Button -->
+        <button id="previewJumpBtn" class="btn-preview-jump" onclick="scrollToPreview()">
+            <i class="fas fa-eye"></i> &nbsp;Preview देखो ↓
+        </button>
+
+        <!-- Download -->
+        <a id="downloadLink" class="btn-download">
+            <i class="fas fa-download"></i> &nbsp;Download करो
+        </a>
     </div>
 
-    <!-- Scroll to Top Button -->
-    <button id="scrollToTop" title="Go to top"><i class="fas fa-arrow-up"></i></button>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>Made by <span class="text-danger">Rajkumar</span>❤️.</p>
-            <p>Follow us on: <a href="https://www.facebook.com/ohiabhist" target="_blank"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/ohi_abhist/" target="_blank"><i class="fab fa-instagram"></i></a></p>            
-        </div>
-    </footer>
-
-    <!-- Loader -->
-    <div id="loader" class="hidden">
-        <div class="loader-spinner"></div>
+    <!-- OUTPUT SECTION -->
+    <div id="outputSection">
+        <h4 id="outputHeading" style="display:none;">🎉 तुम्हारा पोस्टर तैयार है!</h4>
+        <img id="finalOutput" src="#" alt="Final Output">
+        <canvas id="output" style="display:none;"></canvas>
     </div>
 
-    <!-- Notifications -->
-    <div id="notification" class="notification"></div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+<!-- CROP MODAL -->
+<div class="crop-modal-overlay" id="cropModal">
+    <div class="crop-box">
+        <h5><i class="fas fa-crop-alt"></i> &nbsp;फोटो को Crop करो</h5>
+        <div class="crop-container">
+            <img id="cropImage" src="#" alt="Crop">
+        </div>
+        <div class="crop-actions">
+            <button class="btn-crop-cancel" id="cropCancel"><i class="fas fa-times"></i> Cancel</button>
+            <button class="btn-crop-done" id="cropDone"><i class="fas fa-check"></i> Crop करो</button>
+        </div>
+    </div>
+</div>
+
+<!-- LOADER -->
+<div id="loader">
+    <div class="loader-ring"></div>
+    <p>पोस्टर बन रहा है... थोड़ा रुको 🙏</p>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notification" class="notification"></div>
+
+<!-- SCROLL TOP -->
+<button id="scrollToTop" title="Top पर जाओ"><i class="fas fa-arrow-up"></i></button>
+
+<!-- FOOTER -->
+<footer>
+    <p>Made with ❤️ by <span class="text-saffron fw-bold">Rajkumar</span></p>
+    <p>
+        Follow us:
+        <a href="https://www.facebook.com/ohiabhist" target="_blank"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.instagram.com/ohi_abhist/" target="_blank"><i class="fab fa-instagram"></i></a>
+    </p>
+</footer>
+
+<!-- JS Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
