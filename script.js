@@ -15,18 +15,7 @@ document.addEventListener('keydown', function (e) {
         return false;
     }
 });
-// Detect DevTools open
-(function () {
-    const threshold = 160;
-    setInterval(() => {
-        if (
-            window.outerWidth - window.innerWidth > threshold ||
-            window.outerHeight - window.innerHeight > threshold
-        ) {
-            document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-size:1.5rem;font-weight:700;color:red;font-family:sans-serif;">🚫 Developer Tools की अनुमति नहीं है।</div>';
-        }
-    }, 1000);
-})();
+
 
 
 // ─── GLOBALS ─────────────────────────────────
